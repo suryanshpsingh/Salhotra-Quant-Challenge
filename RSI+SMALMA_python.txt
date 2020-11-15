@@ -1,0 +1,49 @@
+from clr import AddReference
+AddReference("System")
+AddReference("QuantConnect.Algorithm")
+AddReference("QuantConnect.Common")
+
+from System import *
+from QuantConnect import *
+from QuantConnect.Algorithm import *
+import numpy as np
+
+class SGSTeamAlgorithm(QCAlgorithm):
+
+    def Initialize(self):
+        # Dates:
+        self.SetStartDate(2018, 1, 1)
+        self.SetEndDate(2018, 12, 31)
+
+        # Time Zone
+        self.SetTimeZone("America/New_York")
+
+        # Initial cash:
+        self.SetCash(10000000)  # 10 million $
+
+        tickers = ['SPY']
+        # Equities:
+        self.spy = self.AddEquity("SPY", Resolution.Minute)
+        self.spy.SetDataNormalizationMode(DataNormalizationMode.Raw)
+
+        # RSI
+        self.rsi = {};
+        self.rsi["SPY"] = self.RSI("SPY", 20, MovingAverageType.Simple, Resolution.Daily)
+
+        # Moving Averages:
+        self.sma = {}
+        self.sma["SPY"] = self.SMA("SPY", 10, Resolution.Minute)
+        self.lma = {}
+        self.lma["SPY"] = self.SMA("SPY", 30, Resolution.Minute)
+
+
+    def OnData(self, data):
+        if self.rsi["SPY"].IsReady:
+            try:
+                if (self.rsi["SPY"].Current.Value < 30):
+                    if (self.sma["SPY"].Current.Value > self.lma["SPY"].Current.Value):
+                        self.MarketOrder("SPY", 100) 
+                elif(self.rsi.Current.Value > 70):
+                    self.Sell("SPY",100)
+            except AttributeError:
+                self.Debug("Attribute Error!")
