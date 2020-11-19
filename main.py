@@ -127,7 +127,7 @@ class SGSTeamAlgorithm(QCAlgorithm):
     def buyOptions(self, amount, stock, type):
         # type = "Call" OR "Put"
         # Get chain
-        contractChain = slice.OptionChains.GetValue(stock[index])
+        contractChain = slice.OptionChains.GetValue(stock[0][1].Symbol)
 
         if contractChain is None: return
         if len(contractChain) == 0: return
