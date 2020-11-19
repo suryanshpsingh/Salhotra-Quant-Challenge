@@ -88,27 +88,27 @@ class SGSTeamAlgorithm(QCAlgorithm):
 
     # Data Gathering Helpers:
     def getPreviousPrice(self):
-        for x in range(0, 10):
-            if self.sortedTenStocks[x][0].Price is not None:
-                self.sortedTenStocks[x][2][0] = self.sortedTenStocks[x][0].Price
-                self.sortedTenStocks[x][1] = True
+        for x in range(0, len(self.stocks)):
+            if self.stocks[x][0].Price is not None:
+                self.stocks[x][2][0] = self.stocks[x][0].Price
+                self.stocks[x][1] = True
             else:
-                self.sortedTenStocks[x][1] = False
-                self.sortedTenStocks[x][2][0] = [0, 0]
+                self.stocks[x][1] = False
+                self.stocks[x][2][0] = [0, 0]
 
     def getCurrentPrice(self):
-        for x in range(0, 10):
-            if self.sortedTenStocks[x][1] is False:
+        for x in range(0, len(self.stocks)):
+            if self.stocks[x][1] is False:
                 # We couldn't get the previous price
                 return
 
-            if self.sortedTenStocks[x][0].Price is not None:
-                self.sortedTenStocks[x][2][1] = self.sortedTenStocks[x][0].Price
-                self.sortedTenStocks[x][1] = True
+            if self.stocks[x][0].Price is not None:
+                self.stocks[x][2][1] = self.stocks[x][0].Price
+                self.stocks[x][1] = True
             else:
                 # We aren't getting this stock
-                self.sortedTenStocks[x][1] = False
-                self.sortedTenStocks[x][2] = [0, 0]
+                self.stocks[x][1] = False
+                self.stocks[x][2] = [0, 0]
     
     # Trading helpers:
     def buyCalls(self, amount, index):
