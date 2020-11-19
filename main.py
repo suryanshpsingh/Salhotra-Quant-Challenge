@@ -124,6 +124,20 @@ class SGSTeamAlgorithm(QCAlgorithm):
         for stock in self.stocks:
             stock[3] = (stock[2][1] - stock[2][0])/stock[2][0]
 
+        
+    # Sort Helpers
+    def sortHelper(stock):
+        if stock[1] is False:
+            # The stock is not ready
+            return -9999
+        else:
+            return stock[3]
+
+    def sortStocks(self):
+        # stocks[rank] = [stock, isReady, [previous price, current price], stockReturn]
+        self.stocks.sort(reverse = True, key = sortHelper)
+        self.sortedTenStocks = self.stocks[:10]
+
     # Trading helpers:
     def isCall(u):
         if u.Right == OptionRight.Call:
@@ -137,7 +151,10 @@ class SGSTeamAlgorithm(QCAlgorithm):
         else:
             return False
 
-    def buyOptions(self, amount, stock, type):
+    def buyStock(self, amount, stock, type):
+        self.MarketOrder(stock[0][0].Symbol, (amount/(stock[0][0].Price)))
+
+    def buyOption(self, amount, stock, type):
         # type = "Call" OR "Put"
         # Get chain
         contractChain = slice.OptionChains.GetValue(stock[0][1].Symbol)
@@ -152,25 +169,11 @@ class SGSTeamAlgorithm(QCAlgorithm):
             contractChain = filter(isPut, contractChain)
 
         self.MarketOrder(contractChain[0].Symbol, amount/contractChain[0].Price) 
-        
-    # Other Helpers
-    def sortHelper(stock):
-        if stock[1] is False:
-            # The stock is not ready
-            return -9999
-        else:
-            return stock[3]
-
-    def sortStocks(self):
-        # stocks[rank] = [stock, isReady, [previous price, current price], stockReturn]
-        self.stocks.sort(reverse = True, key = sortHelper)
-        self.sortedTenStocks = self.stocks[:10]
-
     
     def trade(self):
         for x in range(0, 10):
             amount = self.stocksBudget * 0.1 * self.Portfolio.Cash
             if self.sortedTenStocks[x][2][0] < self.sortedTenStocks[x][2][1]:
-                self.buyOptions(amount, self.sortedTenStocks[x], "Call")
+                self.buyStocks(amount, self.sortedTenStocks[x], "Call")
             else:
-                self.buyOptions(amount, self.sortedTenStocks[x], "Put")
+                self.buyStock(amount, self.sortedTenStocks[x], "Put")
