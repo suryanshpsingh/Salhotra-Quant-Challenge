@@ -49,7 +49,7 @@ class SGSTeamAlgorithm(QCAlgorithm):
         self.Schedule.On(
             self.DateRules.EveryDay("AMZN"),
             self.TimeRules.At(9, 30),      
-               self.getPreviousPrices
+            self.getPreviousPrices
         ) 
 
         # Current Price 
@@ -57,7 +57,7 @@ class SGSTeamAlgorithm(QCAlgorithm):
         self.Schedule.On(
             self.DateRules.EveryDay("AMZN"),
             self.TimeRules.At(10, 0),      
-               self.getCurrentPrices
+            self.getCurrentPrices
         ) 
         
 
