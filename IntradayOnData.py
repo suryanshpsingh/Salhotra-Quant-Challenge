@@ -6,6 +6,8 @@ AddReference("QuantConnect.Common")
 from System import *
 from QuantConnect import *
 from QuantConnect.Algorithm import *
+
+import QuantConnect as QC
 import numpy as np
 
 class SGSTeamAlgorithm(QCAlgorithm):
@@ -52,7 +54,7 @@ class SGSTeamAlgorithm(QCAlgorithm):
 
     # Time-based Helper Functions
     def Now(self):
-        return (self.Time.TimeStamp()/60)
+        return (QC.Time.TimeStamp()/60)
     
     def HoursSinceDayStart(self):
         return int((self.Now() - self.DayStart)/60)
